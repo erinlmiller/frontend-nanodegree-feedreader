@@ -111,10 +111,30 @@ $(function() {
 
     describe('New Feed Selection', function() {
 
-        /* TODO: Write a test that ensures when a new feed is loaded
+        /* DONE. Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
 
+         const feed = document.querySelector('.feed');
+         const feedOne = [];
+
+         beforeEach(function(done) {
+           loadFeed(0);
+           Array.from(feed.children).forEach(function(entry) {
+             feedOne.push(entry.innerText);
+           });
+           loadFeed(1, done);
+         });
+
+         it('content changes', function() {
+           Array.from(feed.children).forEach(function(entry, index) {
+             expect(entry.innerText).not.toBe(feedOne[index]);
+
+             //console.log below to verify expectations
+
+             console.log(entry.innerText, feedOne[index], entry.innerText === feedOne[index]);
+           });
+         });
        });
 }());
