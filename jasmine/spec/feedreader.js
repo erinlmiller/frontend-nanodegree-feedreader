@@ -62,9 +62,9 @@ $(function() {
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
+         const body = document.querySelector('body');
 
          it('is hidden by default', function() {
-           const body = document.querySelector('body');
            expect(body.classList.contains('menu-hidden')).toBe(true);
          });
 
@@ -75,7 +75,6 @@ $(function() {
           */
 
           it('toggles visibility when clicked', function() {
-            const body = document.querySelector('body');
             const menu = document.querySelector('.menu-icon-link');
 
             menu.click();
@@ -101,9 +100,9 @@ $(function() {
            loadFeed(0, done);
          });
 
-         it('complete work and are not empty', function() {
-           const feed = document.querySelector('.feed');
-           expect(feed.children.length > 0).toBe(true);
+         it('have at least one .entry element', function() {
+           const feedEntries = document.querySelectorAll('.feed .entry');
+           expect(feedEntries.length).toBeGreaterThan(0);
          });
        });
 
@@ -117,24 +116,24 @@ $(function() {
          */
 
          const feed = document.querySelector('.feed');
-         const feedOne = [];
+         const firstFeed = [];
+         const secondFeed = [];
 
          beforeEach(function(done) {
-           loadFeed(0);
-           Array.from(feed.children).forEach(function(entry) {
-             feedOne.push(entry.innerText);
-           });
-           loadFeed(1, done);
+             loadFeed(0, function() {
+                 Array.from(feed.children).forEach(function(feed) {
+                     firstFeed.push(feed.innerText);
+                     loadFeed(1, function() {
+                         Array.from(feed.children).forEach(function(feed) {
+                             secondFeed.push(feed.innerText);
+                         });
+                         done();
+                     });
+                 });
+             });
          });
-
          it('content changes', function() {
-           Array.from(feed.children).forEach(function(entry, index) {
-             expect(entry.innerText).not.toBe(feedOne[index]);
-
-             //console.log below to verify expectations
-
-             console.log(entry.innerText, feedOne[index], entry.innerText === feedOne[index]);
-           });
+             expect(firstFeed).not.toEqual(secondFeed);
          });
        });
 }());
